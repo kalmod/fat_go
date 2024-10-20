@@ -17,12 +17,12 @@ Use API to get nutrition information from USDA.
 
 ### References
 [Go - On building URL strings](https://www.jacoelho.com/blog/2021/04/go-on-building-url-strings/)
+
 [DigitalOcean - How to Make HTTP Requests in GO](https://www.digitalocean.com/community/tutorials/how-to-make-http-requests-in-go)
 [Optional function parameter pattern](https://engineering.01cloud.com/2023/04/13/optional-function-parameter-pattern/)
 [Parsing JSON files With Golang](https://tutorialedge.net/golang/parsing-json-with-golang/)
+
 [Better way to read and write JSON file in Golang](https://medium.com/kanoteknologi/better-way-to-read-and-write-json-file-in-golang-9d575b7254f2)
 
 ### Imports
 [go-querystring](https://github.com/google/go-querystring)
-
-
