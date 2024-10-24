@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -13,10 +14,20 @@ import (
 
 const (
 	search_url         string = "https://api.nal.usda.gov/fdc/v1/foods/search"
-	accessToken_url           = "https://oauth.fatsecret.com/connect/token" // TODO: remove
 	foodSearch_url            = "https://platform.fatsecret.com/rest/foods/search/v1"
 	fat_info_file_path        = "./fat_info.json"
 )
+
+var (
+	entered_search_expression string
+	entered_weight            int
+)
+
+func init() {
+	flag.StringVar(&entered_search_expression, "s", "broccoli", "text that will be used to search the FATSECRET database")
+	flag.IntVar(&entered_weight, "w", -1, "Adjust the weight of the item. Updates macros")
+	flag.Parse()
+}
 
 func main() {
 	err := godotenv.Load()
@@ -46,7 +57,7 @@ func main() {
 		log.Fatalf("Error loading secret file: %v\n", fileReadError)
 	}
 
-	searchOptions := food.NewFatSecretSearchOptions(food.FSS_SearchExpression("raw chicken breast"), food.FSS_MaxResults(2), food.FSS_PageNumber(0))
+	searchOptions := food.NewFatSecretSearchOptions(food.FSS_SearchExpression(entered_search_expression), food.FSS_MaxResults(2), food.FSS_PageNumber(0))
 
 	search_req, err_search_req := food.NewSearchRequest(searchOptions, foodSearch_url, accessTokenResponse)
 	if err_search_req != nil {
@@ -89,11 +100,15 @@ func main() {
 		fmt.Println("FatSearchResult no match")
 	}
 
-	fmt.Println("V.2")
-	fmt.Println("Total Results", fatResponse.FatSearch.Foods.TotalResults)
-	fmt.Println("FOOD NUTRITION v") // get serving size
-	nutritionForFood := fatResponse.FatSearch.Foods.Food[0].ParseNutritionFromFoodItem()
-	fmt.Println(nutritionForFood)
-	fmt.Println(fatResponse.FatSearch.Foods.Food[0].FoodDescription)
-	fmt.Printf("END -- %v\n\n", 0)
+	// fmt.Println("Total Results", fatResponse.FatSearch.Foods.TotalResults)
+	// fmt.Println("FOOD NUTRITION") // get serving size
+	// fmt.Println(nutritionForFood)
+	var nutritionForFood food.FoodNutrition
+	if entered_weight > -1 {
+		nutritionForFood = food.GetNewNutritionByWeight(fatResponse.FatSearch.Foods.Food[0].ParseNutritionFromFoodItem(), entered_weight)
+	} else {
+		nutritionForFood = fatResponse.FatSearch.Foods.Food[0].ParseNutritionFromFoodItem()
+	}
+	fmt.Println(nutritionForFood.PrettyPrintNutrition())
+	// fmt.Println(fatResponse.FatSearch.Foods.Food[0].FoodDescription)
 }

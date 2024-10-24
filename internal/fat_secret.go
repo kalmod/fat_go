@@ -75,7 +75,7 @@ func (f *FatSecretFoodItem) ParseNutritionFromFoodItem() FoodNutrition {
 		}
 		allMacros = append(allMacros,
 			Macro{
-				Name:   macroName.FindStringSubmatch(n)[1],
+				Name:   GetMacroType(macroName.FindStringSubmatch(n)[1]),
 				Amount: f,
 				Metric: GetUnitType(macroMetric.FindStringSubmatch(n)[1]),
 			})
