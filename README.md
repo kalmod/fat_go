@@ -6,10 +6,11 @@ Use API to get nutrition information from USDA.
 - [x] Construct search function
 - [x] Make json struct for search requests
 - [x] Display top 1 calories by default - Generic food_types only.
-- [ ] Pretty print information
+- [x] Pretty print information
 - [ ] add flag parameters
   - [ ] change total # of results (default: 2)
-  - [ ] allow entering desired number of serving size (2 would be 2oz/2g/2servings depending on the item)
+  - [x] s: flag to search
+  - [x] w: allow entering desired number of serving size (2 would be 2oz/2g/2servings depending on the item)
   - [ ] Search with ID option (Create function and search request)
   - [ ] Can i configure a menu that allows a user to pick which option they'll do the serving size calc on?
 
