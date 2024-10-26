@@ -38,6 +38,9 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
+	// TODO: Search for .env file
+	// If not exists, request ClientID & ClientSecret
+
 	accessTokenResponse := food.AccessTokenJSON{}
 	client := &http.Client{}
 	ClientID := os.Getenv("FATSECRET_ClientID")
