@@ -21,12 +21,15 @@ const (
 var (
 	entered_search_expression string
 	entered_weight            int
+	entered_display_amount    int
 )
 
 func init() {
 	flag.StringVar(&entered_search_expression, "s", "broccoli", "text that will be used to search the FATSECRET database")
 	flag.IntVar(&entered_weight, "w", -1, "Adjust the weight of the item. Updates macros")
+	flag.IntVar(&entered_display_amount, "d", 1, "Adjust the number of food displayed")
 	flag.Parse()
+	// TODO: Add check for clientid & clientsecret
 }
 
 func main() {
@@ -51,7 +54,6 @@ func main() {
 
 	}
 
-	// fmt.Println("fat_info.json exists")
 	fileReadError := food.ProcessSecretFile(fat_info_file_path, &accessTokenResponse)
 	if fileReadError != nil {
 		log.Fatalf("Error loading secret file: %v\n", fileReadError)
@@ -74,7 +76,6 @@ func main() {
 
 	if !reflect.DeepEqual(fatResponse.FatError, food.FatSecretError{}) { // FALSE BE GOOD
 		if fatResponse.FatError.Error.Code == 13 {
-			// TODO: I also need to make a new request.
 			if accessToken_err := food.GetNewAccessToken(
 				client, &accessTokenResponse, ClientID, ClientSecret,
 			); accessToken_err != nil {
@@ -100,15 +101,15 @@ func main() {
 		fmt.Println("FatSearchResult no match")
 	}
 
-	// fmt.Println("Total Results", fatResponse.FatSearch.Foods.TotalResults)
-	// fmt.Println("FOOD NUTRITION") // get serving size
-	// fmt.Println(nutritionForFood)
-	var nutritionForFood food.FoodNutrition
-	if entered_weight > -1 {
-		nutritionForFood = food.GetNewNutritionByWeight(fatResponse.FatSearch.Foods.Food[0].ParseNutritionFromFoodItem(), entered_weight)
-	} else {
-		nutritionForFood = fatResponse.FatSearch.Foods.Food[0].ParseNutritionFromFoodItem()
+	for i := 0; i < entered_display_amount && i < len(fatResponse.FatSearch.Foods.Food); i++ {
+		var nutritionForFood food.FoodNutrition
+		if entered_weight > -1 {
+			nutritionForFood = food.GetNewNutritionByWeight(fatResponse.FatSearch.Foods.Food[i].ParseNutritionFromFoodItem(), entered_weight)
+		} else {
+			nutritionForFood = fatResponse.FatSearch.Foods.Food[i].ParseNutritionFromFoodItem()
+		}
+		fmt.Println(nutritionForFood.PrettyPrintNutrition())
+		// fmt.Println(fatResponse.FatSearch.Foods.Food[0].FoodDescription)
+
 	}
-	fmt.Println(nutritionForFood.PrettyPrintNutrition())
-	// fmt.Println(fatResponse.FatSearch.Foods.Food[0].FoodDescription)
 }
