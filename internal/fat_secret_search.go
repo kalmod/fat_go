@@ -37,7 +37,7 @@ func FSS_PageNumber(n int) func(*FatSecretSearchOptions) {
 }
 func FSS_MaxResults(n int) func(*FatSecretSearchOptions) {
 	return func(fss *FatSecretSearchOptions) {
-		fss.MaxResults = n
+		fss.MaxResults = max(n, 2)
 	}
 }
 
